@@ -1,0 +1,21 @@
+# Build outputs
+**/build/
+**/.gradle/
+.gradle/
+
+# IDE files
+.idea/
+*.iml
+.DS_Store
+
+# Signing / keys (add your own locally, do not commit)
+*.keystore
+*.jks
+
+# OS/Editor noise
+Thumbs.db
+*.log
+
+# Release artifacts
+*.apk
+*.aab
