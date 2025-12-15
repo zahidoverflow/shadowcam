@@ -30,6 +30,11 @@ jobs:
             platforms;android-34
             build-tools;34.0.2
 
+      - name: Install SDK components (retry-friendly)
+        run: |
+          yes | sdkmanager --sdk_root="$ANDROID_SDK_ROOT" --licenses
+          yes | sdkmanager --sdk_root="$ANDROID_SDK_ROOT" "platform-tools" "platforms;android-34" "build-tools;34.0.2"
+
       - name: Grant execute permission for Gradle wrapper
         run: chmod +x gradlew
 
