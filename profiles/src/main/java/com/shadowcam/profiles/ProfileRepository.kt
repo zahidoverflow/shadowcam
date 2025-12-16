@@ -1,7 +1,6 @@
 package com.shadowcam.profiles
 
-import com.shadowcam.core.model.CameraProfile
-import com.shadowcam.core.model.DemoData
+import com.shadowcam.core.model.AppProfile
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -10,30 +9,22 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 
 class ProfileRepository(
-    seed: List<CameraProfile> = DemoData.demoProfiles(),
+    seed: List<AppProfile> = emptyList(),
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) {
-    private val profiles = MutableStateFlow(seed.associateBy { it.appId })
+    private val profiles = MutableStateFlow(seed.associateBy { it.packageName })
 
-    val profilesFlow: Flow<List<CameraProfile>> = profiles.map { map ->
+    val profilesFlow: Flow<List<AppProfile>> = profiles.map { map ->
         map.values.sortedBy { it.label }
     }
 
-    suspend fun upsert(profile: CameraProfile) = withContext(dispatcher) {
-        profiles.value = profiles.value.toMutableMap().apply { put(profile.appId, profile) }
+    suspend fun upsert(profile: AppProfile) = withContext(dispatcher) {
+        profiles.value = profiles.value.toMutableMap().apply { put(profile.packageName, profile) }
     }
 
-    suspend fun delete(appId: String) = withContext(dispatcher) {
-        profiles.value = profiles.value.toMutableMap().apply { remove(appId) }
+    suspend fun delete(packageName: String) = withContext(dispatcher) {
+        profiles.value = profiles.value.toMutableMap().apply { remove(packageName) }
     }
 
-    fun profileFor(appId: String): CameraProfile? = profiles.value[appId]
-
-    fun toggleFavorite(appId: String) {
-        profiles.value[appId]?.let { current ->
-            profiles.value = profiles.value.toMutableMap().apply {
-                put(appId, current.copy(favorite = !current.favorite))
-            }
-        }
-    }
+    fun profileFor(packageName: String): AppProfile? = profiles.value[packageName]
 }
