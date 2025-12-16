@@ -24,14 +24,11 @@ jobs:
 
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
-        with:
-          packages: |
-            platform-tools
-            platforms;android-34
-            build-tools;34.0.2
 
       - name: Install SDK components (retry-friendly)
+        shell: bash
         run: |
+          set -euo pipefail
           yes | sdkmanager --sdk_root="$ANDROID_SDK_ROOT" --licenses
           yes | sdkmanager --sdk_root="$ANDROID_SDK_ROOT" "platform-tools" "platforms;android-34" "build-tools;34.0.2"
 
@@ -52,3 +49,4 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: app/build/outputs/apk/release/app-release.apk
+
