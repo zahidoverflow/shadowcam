@@ -12,6 +12,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -113,6 +114,7 @@ private fun ControlButtons(state: VirtualCameraState) {
 }
 
 @Composable
+@OptIn(ExperimentalMaterial3Api::class)
 private fun ModeChip(label: String, selected: Boolean, color: androidx.compose.ui.graphics.Color, onClick: () -> Unit) {
     val container = if (selected) color.copy(alpha = 0.15f) else SurfaceElevated
     val borderColor = if (selected) color else SurfaceElevated

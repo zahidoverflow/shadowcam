@@ -1,6 +1,6 @@
 [versions]
 agp = "8.2.2"
-kotlin = "1.9.22"
+kotlin = "1.9.20"
 compose-bom = "2023.10.01"
 activity-compose = "1.8.2"
 navigation-compose = "2.7.6"

@@ -1,6 +1,5 @@
 package com.shadowcam.ui.theme
 
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.runtime.Composable
@@ -18,10 +17,7 @@ private val DarkColors = darkColorScheme(
 )
 
 @Composable
-fun ShadowCamTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
-    content: @Composable () -> Unit
-) {
+fun ShadowCamTheme(content: @Composable () -> Unit) {
     MaterialTheme(
         colorScheme = DarkColors,
         typography = ShadowTypography,

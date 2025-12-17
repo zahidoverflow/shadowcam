@@ -54,6 +54,14 @@
 - M1 Virtual Camera Core: virtual camera service (non-root path), source ingest (image/video loop), test feed screen, VCAM ON/OFF + stats, basic profile store.
 - M2 App Profiles: app selector grid, favorites, profile quick menu, per-app apply on foreground, defaults/migrations.
 - M3 Metadata & Anti-Detection: EXIF overrides, sensor spoof presets, anti-detect toggles (jitter, sandbox-aware, legacy/camera2), risk pills.
-- M4 Sources Expansion: RTSP ingest, live screen capture, trim/crop tools, assign-to-app flow, “Set Default” + validation.
+- M4 Sources Expansion: RTSP ingest, live screen capture, trim/crop tools, assign-to-app flow, "Set Default" + validation.
 - M5 Logs & Trust: console view, export/copy, permission rationale overlay, Simulate Detection flow, warnings for root hooks.
 - M6 Polish & QA: haptics/micro-animations, accessibility review, long-run soak tests, battery/perf tuning, store assets (screens, icon).
+
+## Future Enhancements (post-initial release)
+- Device validation matrix: non-root and KernelSU/root paths on representative devices (e.g., vayu), with log-captured outcomes.
+- Root injector hardening: SELinux allowlist/module guidance, ABI checks, camera provider hook fallback for vendor differences.
+- Source tooling: RTSP ingest with latency budget, trim/crop for media, and "Set Default"/assign-to-app validation UX.
+- Anti-detection: sandbox-aware mode banner, jitter presets by risk pill, Camera2/legacy toggle verification per device.
+- Trust & export: Simulate Detection view, log redaction defaults, one-tap log export/share with session metadata.
+- Test coverage: unit for profile validation/engine state, instrumentation smoke (launch → toggle VCAM → apply profile), soak tests for long-running feed.
