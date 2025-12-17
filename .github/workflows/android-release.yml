@@ -37,15 +37,19 @@ jobs:
       - name: Build release APK
         run: ./gradlew clean :app:assembleRelease
 
+      - name: Rename APK
+        run: mv app/build/outputs/apk/release/app-release.apk app/build/outputs/apk/release/ShadowCam-${{ github.ref_name }}.apk
+
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: app-release-apk
-          path: app/build/outputs/apk/release/app-release.apk
+          name: ShadowCam-${{ github.ref_name }}
+          path: app/build/outputs/apk/release/ShadowCam-${{ github.ref_name }}.apk
 
       - name: Publish GitHub Release asset
         if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v1
         with:
-          files: app/build/outputs/apk/release/app-release.apk
+          files: app/build/outputs/apk/release/ShadowCam-${{ github.ref_name }}.apk
+          generate_release_notes: true
 
