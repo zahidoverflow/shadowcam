@@ -27,7 +27,7 @@
 - Services & Flows:
   - Virtual Camera Service: maintains injection state, exposes binder interface for UI; handles ON/OFF, attaches selected source, and surfaces live stats (fps/latency/uptime).
   - Source Manager: validates media, normalizes frame rate/resolution, handles loop vs single-shot, and exposes test feed.
-  - Profile Manager: maps app package → profile (resolution/FPS/EXIF preset/anti-detect level/source binding), applies profile on app foreground or request.
+  - Profile Manager: maps app package -> profile (resolution/FPS/EXIF preset/anti-detect level/source binding), applies profile on app foreground or request.
   - Metadata Injector: overrides EXIF (where applicable) and camera characteristics (reported res/FPS/sensor props) with bounds checking.
   - Anti-Detection: toggles randomized timing, sandbox-aware mode (flags for emulator/VM signals), camera2/legacy mode switch; exposes risk levels for UI badges.
   - Logging & Export: ring buffer + persistent store, level filters, export to file/share sheet; redact sensitive fields by default.
@@ -64,4 +64,15 @@
 - Source tooling: RTSP ingest with latency budget, trim/crop for media, and "Set Default"/assign-to-app validation UX.
 - Anti-detection: sandbox-aware mode banner, jitter presets by risk pill, Camera2/legacy toggle verification per device.
 - Trust & export: Simulate Detection view, log redaction defaults, one-tap log export/share with session metadata.
-- Test coverage: unit for profile validation/engine state, instrumentation smoke (launch → toggle VCAM → apply profile), soak tests for long-running feed.
+- Test coverage: unit for profile validation/engine state, instrumentation smoke (launch -> toggle VCAM -> apply profile), soak tests for long-running feed.
+
+## To-dos.md Status (root-first pass)
+### Done
+- Root Camera1 integration for LSPosed/Xposed-style modules: root availability check, sync `virtual.mp4` and `1000.bmp`, marker toggles (`disable.jpg`, `no_toast.jpg`, `force_show.jpg`, `private_dir.jpg`, `no-silent.jpg`), persisted picks, Sources UI wiring.
+
+### Not Done Yet
+- Live broadcast & video management (RTMP, playlists, aspect/resolution handling).
+- Virtual camera injection for apps/browsers (no actual camera hook or browser optimizations).
+- Decoding/rendering controls (HW/SW decode toggle, flip/rotation, A/V sync switch, manual alignment).
+- Advanced anti-detect and system spoofing features (fingerprint/ID spoofing, root hiding, NFC, multi-account).
+- Deepfake/replacement features, network emulation/proxy tooling, and PC synchronization.
