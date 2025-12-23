@@ -92,3 +92,11 @@ dependencies {
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 }
+
+tasks.register<Delete>("cleanDesktopIni") {
+    delete(fileTree("src/main/res") { include("**/desktop.ini") })
+}
+
+tasks.named("preBuild") {
+    dependsOn("cleanDesktopIni")
+}
