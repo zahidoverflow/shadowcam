@@ -17,17 +17,21 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.shadowcam.LocalAppDependencies
 import com.shadowcam.core.model.LogEntry
 import com.shadowcam.core.model.LogLevel
 import com.shadowcam.ui.theme.SurfaceElevated
+import kotlinx.coroutines.launch
 
 @Composable
 fun LogsScreen() {
     val deps = LocalAppDependencies.current
     val logs by deps.logSink.logs.collectAsState(initial = emptyList())
+    val scope = rememberCoroutineScope()
+    
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -37,8 +41,11 @@ fun LogsScreen() {
         Text("Logs & Console", style = MaterialTheme.typography.headlineSmall)
         Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             OutlinedButton(onClick = {
-                deps.logSink.log(LogLevel.DEBUG, "Logs", "Export requested")
-            }) { Text("Export") }
+                scope.launch {
+                    deps.logSink.log(LogLevel.DEBUG, "Logs", "Exporting logs...")
+                    deps.rootCamera1Manager.exportLogs()
+                }
+            }) { Text("Export to Downloads") }
             Button(onClick = { deps.logSink.clear() }) { Text("Clear") }
         }
         LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {

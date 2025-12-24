@@ -13,6 +13,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlin.random.Random
 
+import com.shadowcam.logging.LogSink
+import com.shadowcam.core.model.LogLevel
+
 interface VirtualCameraEngine {
     val state: StateFlow<VirtualCameraState>
     suspend fun start(source: SourceDescriptor?, profile: AppProfile? = null): Result<Unit>
@@ -21,7 +24,7 @@ interface VirtualCameraEngine {
     fun setMode(mode: VirtualCameraMode)
 }
 
-class FakeVirtualCameraEngine : VirtualCameraEngine {
+class FakeVirtualCameraEngine(private val logSink: LogSink?) : VirtualCameraEngine {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
     private val _state = MutableStateFlow(VirtualCameraState.Idle)
     override val state: StateFlow<VirtualCameraState> = _state
@@ -44,6 +47,7 @@ class FakeVirtualCameraEngine : VirtualCameraEngine {
     }
 
     override suspend fun start(source: SourceDescriptor?, profile: AppProfile?): Result<Unit> {
+        logSink?.log(LogLevel.INFO, "Engine", "Start requested. Source: ${source?.name}")
         _state.value = _state.value.copy(
             isEnabled = true,
             source = source ?: _state.value.source,
@@ -54,16 +58,19 @@ class FakeVirtualCameraEngine : VirtualCameraEngine {
     }
 
     override suspend fun stop(): Result<Unit> {
+        logSink?.log(LogLevel.INFO, "Engine", "Stop requested")
         _state.value = VirtualCameraState.Idle.copy(mode = _state.value.mode)
         return Result.success(Unit)
     }
 
     override suspend fun applyProfile(profile: AppProfile): Result<Unit> {
+        logSink?.log(LogLevel.DEBUG, "Engine", "Applying profile: ${profile.packageName}")
         _state.value = _state.value.copy(profile = profile)
         return Result.success(Unit)
     }
 
     override fun setMode(mode: VirtualCameraMode) {
+        logSink?.log(LogLevel.DEBUG, "Engine", "Mode set to: $mode")
         _state.value = _state.value.copy(mode = mode)
     }
 }

@@ -52,7 +52,7 @@ class RootCamera1Manager(
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) {
     private val appContext = context.applicationContext
-    private val shell = RootShell()
+    private val shell = RootShell(logSink)
     private val settingsStore = RootSettingsStore(appContext)
     private val camera1Dir = defaultCamera1Dir()
     private val scope = CoroutineScope(SupervisorJob() + dispatcher)
@@ -176,6 +176,26 @@ class RootCamera1Manager(
         } else {
             logSink.log(LogLevel.ERROR, "Root", "Marker update failed: ${result.stderr}")
             setMessage("Marker update failed", true)
+        }
+    }
+
+    suspend fun exportLogs() = withContext(dispatcher) {
+        if (!ensureRoot()) {
+            setMessage("Root needed to export logs", true)
+            return@withContext
+        }
+        val src = File(appContext.filesDir, "shadowcam_debug.log").absolutePath
+        val dest = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "shadowcam_debug.log").absolutePath
+        // rm dest first to ensure fresh copy? cp -f does it.
+        val command = "cp -f ${shellQuote(src)} ${shellQuote(dest)} && chmod 644 ${shellQuote(dest)}"
+        
+        val result = shell.run(command)
+        if (result.success) {
+            logSink.log(LogLevel.INFO, "Root", "Logs exported to $dest")
+            setMessage("Logs exported to Downloads", false)
+        } else {
+            logSink.log(LogLevel.ERROR, "Root", "Log export failed: ${result.stderr}")
+            setMessage("Log export failed", true)
         }
     }
 

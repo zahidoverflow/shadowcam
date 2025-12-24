@@ -16,6 +16,7 @@
 Thumbs.db
 desktop.ini
 *.log
+shadowcam_debug.log
 
 # Release artifacts
 *.apk

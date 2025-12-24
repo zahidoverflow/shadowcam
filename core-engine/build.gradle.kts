@@ -33,5 +33,6 @@ android {
 
 dependencies {
     implementation(project(":core-model"))
+    implementation(project(":logging"))
     implementation(libs.kotlinx.coroutines.core)
 }

@@ -31,10 +31,14 @@ object AppDependenciesProvider {
         private set
 
     fun installDefault(context: Context) {
-        val logSink = InMemoryLogSink()
+        val memorySink = InMemoryLogSink()
+        val logFile = java.io.File(context.filesDir, "shadowcam_debug.log")
+        val fileSink = com.shadowcam.logging.FileLogSink(logFile)
+        val logSink = com.shadowcam.logging.CompositeLogSink(listOf(memorySink, fileSink))
+
         val antiDetectMonitor = InMemoryAntiDetectMonitor()
         dependencies = AppDependencies(
-            virtualCameraEngine = FakeVirtualCameraEngine(),
+            virtualCameraEngine = FakeVirtualCameraEngine(logSink),
             profileStore = InMemoryProfileStore(),
             sourceRepository = InMemorySourceRepository(),
             logSink = logSink,
