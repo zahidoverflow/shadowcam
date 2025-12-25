@@ -66,9 +66,22 @@
 - Trust & export: Simulate Detection view, log redaction defaults, one-tap log export/share with session metadata.
 - Test coverage: unit for profile validation/engine state, instrumentation smoke (launch -> toggle VCAM -> apply profile), soak tests for long-running feed.
 
+## Current Implementation Notes
+- Target app selection with installed app search and per-app profile editor persisted in DataStore.
+- Root Camera1 sync respects private_dir + target app, tracks last synced media, and exposes active sync path in UI.
+- Foreground VCAM service start/stop wired to the engine; injection still external.
+- Profiles auto-apply when a target app is loaded at startup.
+- Target app launch shortcut added in the Apps screen.
+- Sources screen includes in-app preview with ratio hints and Source/Target Fit/Fill modes.
+- Logs now include session/device metadata and root command context for debugging.
+
 ## To-dos.md Status (root-first pass)
 ### Done
 - Root Camera1 integration for LSPosed/Xposed-style modules: root availability check, sync `virtual.mp4` and `1000.bmp`, marker toggles (`disable.jpg`, `no_toast.jpg`, `force_show.jpg`, `private_dir.jpg`, `no-silent.jpg`), persisted picks, Sources UI wiring.
+- Target app selection and per-app profile editing/persistence.
+- Root private-dir sync path targeting with last-synced status.
+- Structured log metadata (session/device/root command context).
+- VCAM service start/stop wired to engine state.
 
 ### Not Done Yet
 - Live broadcast & video management (RTMP, playlists, aspect/resolution handling).

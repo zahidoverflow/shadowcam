@@ -42,9 +42,22 @@ class FileLogSink(
         }
     }
 
-    override fun log(level: LogLevel, tag: String, message: String) {
+    override fun log(level: LogLevel, tag: String, message: String, metadata: Map<String, String>) {
         val timestamp = dateFormat.format(Date())
-        val line = "$timestamp [$level] $tag: $message"
+        val mergedMetadata = if (metadata.isEmpty()) {
+            mapOf("thread" to Thread.currentThread().name)
+        } else {
+            metadata + mapOf("thread" to Thread.currentThread().name)
+        }
+        val metaString = if (mergedMetadata.isEmpty()) {
+            ""
+        } else {
+            mergedMetadata.entries.joinToString(
+                prefix = " | ",
+                separator = " "
+            ) { "${it.key}=${it.value}" }
+        }
+        val line = "$timestamp [$level] $tag: $message$metaString"
         channel.trySend(line)
     }
 

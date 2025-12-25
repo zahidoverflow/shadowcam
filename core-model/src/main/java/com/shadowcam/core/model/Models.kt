@@ -76,7 +76,9 @@ data class LogEntry(
     val timestampMs: Long,
     val level: LogLevel,
     val tag: String,
-    val message: String
+    val message: String,
+    val metadata: Map<String, String> = emptyMap(),
+    val thread: String? = null
 )
 
 data class AntiDetectStatus(

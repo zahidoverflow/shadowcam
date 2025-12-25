@@ -58,6 +58,13 @@ fun LogsScreen() {
 
 @Composable
 private fun LogRow(entry: LogEntry) {
+    val metadataLine = buildString {
+        entry.thread?.let { append("thread=").append(it) }
+        if (entry.metadata.isNotEmpty()) {
+            if (isNotEmpty()) append(" ")
+            append(entry.metadata.entries.joinToString(" ") { "${it.key}=${it.value}" })
+        }
+    }.let { if (it.length > 160) it.take(160) + "..." else it }
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = SurfaceElevated)
@@ -65,6 +72,9 @@ private fun LogRow(entry: LogEntry) {
         Column(Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(2.dp)) {
             Text("[${entry.level}] ${entry.tag}", style = MaterialTheme.typography.labelMedium)
             Text(entry.message, style = MaterialTheme.typography.bodyMedium)
+            if (metadataLine.isNotBlank()) {
+                Text(metadataLine, style = MaterialTheme.typography.labelMedium)
+            }
         }
     }
 }

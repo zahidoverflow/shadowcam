@@ -47,7 +47,16 @@ class FakeVirtualCameraEngine(private val logSink: LogSink?) : VirtualCameraEngi
     }
 
     override suspend fun start(source: SourceDescriptor?, profile: AppProfile?): Result<Unit> {
-        logSink?.log(LogLevel.INFO, "Engine", "Start requested. Source: ${source?.name}")
+        logSink?.log(
+            LogLevel.INFO,
+            "Engine",
+            "Start requested",
+            mapOf(
+                "source" to (source?.name ?: "none"),
+                "profile" to (profile?.packageName ?: "none"),
+                "mode" to _state.value.mode.name
+            )
+        )
         _state.value = _state.value.copy(
             isEnabled = true,
             source = source ?: _state.value.source,
@@ -58,19 +67,34 @@ class FakeVirtualCameraEngine(private val logSink: LogSink?) : VirtualCameraEngi
     }
 
     override suspend fun stop(): Result<Unit> {
-        logSink?.log(LogLevel.INFO, "Engine", "Stop requested")
+        logSink?.log(
+            LogLevel.INFO,
+            "Engine",
+            "Stop requested",
+            mapOf("mode" to _state.value.mode.name)
+        )
         _state.value = VirtualCameraState.Idle.copy(mode = _state.value.mode)
         return Result.success(Unit)
     }
 
     override suspend fun applyProfile(profile: AppProfile): Result<Unit> {
-        logSink?.log(LogLevel.DEBUG, "Engine", "Applying profile: ${profile.packageName}")
+        logSink?.log(
+            LogLevel.DEBUG,
+            "Engine",
+            "Applying profile",
+            mapOf("package" to profile.packageName)
+        )
         _state.value = _state.value.copy(profile = profile)
         return Result.success(Unit)
     }
 
     override fun setMode(mode: VirtualCameraMode) {
-        logSink?.log(LogLevel.DEBUG, "Engine", "Mode set to: $mode")
+        logSink?.log(
+            LogLevel.DEBUG,
+            "Engine",
+            "Mode set",
+            mapOf("mode" to mode.name)
+        )
         _state.value = _state.value.copy(mode = mode)
     }
 }

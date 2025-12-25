@@ -37,6 +37,7 @@ import kotlinx.coroutines.launch
 fun HomeScreen() {
     val deps = LocalAppDependencies.current
     val state by deps.virtualCameraEngine.state.collectAsState()
+    val rootState by deps.rootCamera1Manager.state.collectAsState()
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -46,7 +47,7 @@ fun HomeScreen() {
     ) {
         Text("ShadowCam Control", style = MaterialTheme.typography.headlineSmall)
         ModeRow(state.mode) { deps.virtualCameraEngine.setMode(it) }
-        StatusCards(state)
+        StatusCards(state, rootState)
         ControlButtons(state)
         Text("Quick Stats", style = MaterialTheme.typography.titleMedium)
         LazyRow(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -70,14 +71,21 @@ private fun ModeRow(mode: VirtualCameraMode, onModeChange: (VirtualCameraMode) -
 }
 
 @Composable
-private fun StatusCards(state: VirtualCameraState) {
+private fun StatusCards(state: VirtualCameraState, rootState: com.shadowcam.root.RootCamera1State) {
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         ElevatedCard(colors = CardDefaults.cardColors(containerColor = SurfaceElevated)) {
             Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 Text("VCAM Status", style = MaterialTheme.typography.titleMedium)
                 Text(if (state.isEnabled) "ON" else "OFF", color = if (state.isEnabled) AccentLime else WarningAmber)
-                Text("Source: ${state.source?.name ?: "None"}", style = MaterialTheme.typography.bodyMedium)
+                Text(
+                    "Source: ${rootState.lastSynced?.name ?: state.source?.name ?: "None"}",
+                    style = MaterialTheme.typography.bodyMedium
+                )
                 Text("Profile: ${state.profile?.label ?: "None"}", style = MaterialTheme.typography.bodyMedium)
+                Text(
+                    "Target: ${rootState.targetApp?.label ?: "None"}",
+                    style = MaterialTheme.typography.bodyMedium
+                )
             }
         }
         Card(colors = CardDefaults.cardColors(containerColor = SurfaceElevated)) {
@@ -108,7 +116,10 @@ private fun ControlButtons(state: VirtualCameraState) {
             modifier = Modifier.weight(1f)
         ) { Text(if (state.isEnabled) "Arm OFF" else "Arm VCAM") }
         Button(onClick = {
-            deps.logSink.log(com.shadowcam.core.model.LogLevel.INFO, "Home", "Export logs requested")
+            scope.launch {
+                deps.logSink.log(com.shadowcam.core.model.LogLevel.INFO, "Home", "Export logs requested")
+                deps.rootCamera1Manager.exportLogs()
+            }
         }) { Text("Export Logs") }
     }
 }

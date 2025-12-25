@@ -8,11 +8,12 @@ Android virtual camera controller with root Camera1 sync, a Compose-first UI, an
 - Root-first workflow: manage Camera1 files and marker toggles used by LSPosed/Xposed camera modules.
 - Focused, dark UI with clear status feedback and log visibility.
 - Persistent source picks (video and image) for quick re-sync.
+- Target app selection with per-app profiles.
 - Modular codebase ready for a real virtual camera engine.
 
 ## What This Is (and Is Not)
-- This app manages Camera1 files and marker flags on rooted devices.
-- It does not implement a camera injection engine yet. The engine layer is stubbed.
+- This app manages Camera1 files and marker flags on rooted devices, with per-app targets and profiles.
+- It still requires an external hook/injection module (LSPosed/Xposed, etc.) to redirect camera output in other apps.
 - It is not intended for bypassing security, identity checks, or app protections. Use responsibly and lawfully.
 
 ## Root Camera1 Workflow
@@ -28,12 +29,17 @@ ShadowCam writes to `DCIM/Camera1` using root and follows common module conventi
 
 Tip: Match the replacement media resolution to the target app camera resolution to avoid black screens or distortion.
 
+### Target Apps + Private Dir
+If you enable the `private_dir.jpg` marker, pick a target app in **Apps** first. ShadowCam will sync to:
+`DCIM/Camera1/<package.name>/virtual.mp4` and `DCIM/Camera1/<package.name>/1000.bmp`.
+
 ## Quick Start (Root)
 1. Root your device and install an LSPosed/Xposed camera module (not included here).
 2. Build and install ShadowCam.
-3. Open Sources -> pick a video/image -> Sync to Camera1.
-4. Toggle marker files as needed.
-5. Open the target app camera.
+3. Open **Apps** -> pick a target app (optional but required for Private Dir).
+4. Open **Sources** -> pick a video/image -> Sync to Camera1.
+5. Toggle marker files as needed.
+6. Open the target app camera.
 
 ## Modules
 - `app`: Compose UI, navigation, DI, service wiring.

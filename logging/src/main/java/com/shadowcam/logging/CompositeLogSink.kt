@@ -13,8 +13,8 @@ class CompositeLogSink(private val sinks: List<LogSink>) : LogSink {
     override val logs: Flow<List<LogEntry>>
         get() = sinks.firstOrNull()?.logs ?: kotlinx.coroutines.flow.flowOf(emptyList())
 
-    override fun log(level: LogLevel, tag: String, message: String) {
-        sinks.forEach { it.log(level, tag, message) }
+    override fun log(level: LogLevel, tag: String, message: String, metadata: Map<String, String>) {
+        sinks.forEach { it.log(level, tag, message, metadata) }
     }
 
     override fun clear() {
