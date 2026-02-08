@@ -1,0 +1,29 @@
+ShadowCam User Guide (Quick Start)
+
+Prerequisites
+1. Rooted Android device (Magisk/KernelSU/APatch).
+2. Grant root permission to ShadowCam when asked.
+3. Install the required hook/module on your device (if your setup uses one).
+
+Getting Started (Recommended Order)
+1. Apps tab: pick your Target App.
+   - Optional: enable Private Dir if you want app-specific sync paths.
+2. Sources tab: select a Video or Image source.
+   - Use the Preview card to confirm the result and Fit/Fill mode.
+3. Sources tab: tap Sync to Camera (required after changing source).
+4. Home tab: tap Arm VCAM to keep the service active.
+5. Open your target app and test the camera view.
+
+Common Problems
+- Root not available:
+  - Open your root manager and allow ShadowCam, then restart ShadowCam.
+- No virtual feed in target app:
+  - Re-sync the source and confirm the target app is selected (if using Private Dir).
+  - Some apps use Camera2; your module/hook must support your target app/device.
+- Need logs:
+  - Logs tab: Export to Downloads (shadowcam_debug.log).
+
+Safety Notes
+- Using virtual camera features in third-party apps may violate their rules.
+- Keep logs private; they can include device and session metadata.
+

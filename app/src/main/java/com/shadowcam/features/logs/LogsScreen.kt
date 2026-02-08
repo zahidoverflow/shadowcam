@@ -23,12 +23,14 @@ import androidx.compose.ui.unit.dp
 import com.shadowcam.LocalAppDependencies
 import com.shadowcam.core.model.LogEntry
 import com.shadowcam.core.model.LogLevel
+import com.shadowcam.navigation.LocalNavController
 import com.shadowcam.ui.theme.SurfaceElevated
 import kotlinx.coroutines.launch
 
 @Composable
 fun LogsScreen() {
     val deps = LocalAppDependencies.current
+    val navController = LocalNavController.current
     val logs by deps.logSink.logs.collectAsState(initial = emptyList())
     val scope = rememberCoroutineScope()
     
@@ -40,6 +42,7 @@ fun LogsScreen() {
     ) {
         Text("Logs & Console", style = MaterialTheme.typography.headlineSmall)
         Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            OutlinedButton(onClick = { navController.navigate("help") }) { Text("Help") }
             OutlinedButton(onClick = {
                 scope.launch {
                     deps.logSink.log(LogLevel.DEBUG, "Logs", "Exporting logs...")

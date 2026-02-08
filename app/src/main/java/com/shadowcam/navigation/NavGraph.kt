@@ -3,6 +3,7 @@ package com.shadowcam.navigation
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Dashboard
+import androidx.compose.material.icons.filled.Help
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Source
@@ -14,6 +15,7 @@ sealed class NavDestination(val route: String, val label: String, val icon: Imag
     object Sources : NavDestination("sources", "Sources", Icons.Filled.Source)
     object Expert : NavDestination("expert", "Expert", Icons.Filled.Build)
     object Logs : NavDestination("logs", "Logs", Icons.Filled.Settings)
+    object Help : NavDestination("help", "Help", Icons.Filled.Help)
 }
 
 val bottomDestinations = listOf(

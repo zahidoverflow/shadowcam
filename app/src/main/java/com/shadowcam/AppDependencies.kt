@@ -13,6 +13,8 @@ import com.shadowcam.engine.AppVirtualCameraEngine
 import com.shadowcam.logging.InMemoryLogSink
 import com.shadowcam.logging.LogSink
 import com.shadowcam.logging.SessionLogSink
+import com.shadowcam.onboarding.DataStoreOnboardingStore
+import com.shadowcam.onboarding.OnboardingStore
 import com.shadowcam.profiles.ProfileStore
 import com.shadowcam.profiles.DataStoreProfileStore
 import com.shadowcam.root.RootCamera1Manager
@@ -34,7 +36,8 @@ data class AppDependencies(
     val antiDetectMonitor: AntiDetectMonitor,
     val rootCamera1Manager: RootCamera1Manager,
     val targetAppStore: TargetAppStore,
-    val installedAppsRepository: InstalledAppsRepository
+    val installedAppsRepository: InstalledAppsRepository,
+    val onboardingStore: OnboardingStore
 )
 
 val LocalAppDependencies = androidx.compose.runtime.staticCompositionLocalOf<AppDependencies> {
@@ -66,7 +69,8 @@ object AppDependenciesProvider {
             antiDetectMonitor = antiDetectMonitor,
             rootCamera1Manager = rootCamera1Manager,
             targetAppStore = targetAppStore,
-            installedAppsRepository = InstalledAppsRepository(context, logSink)
+            installedAppsRepository = InstalledAppsRepository(context, logSink),
+            onboardingStore = DataStoreOnboardingStore(context)
         )
         observerScope?.cancel()
         observerScope = CoroutineScope(SupervisorJob() + Dispatchers.IO).apply {

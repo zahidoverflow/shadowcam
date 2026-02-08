@@ -8,12 +8,17 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Help
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -24,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import com.shadowcam.LocalAppDependencies
 import com.shadowcam.core.model.VirtualCameraMode
 import com.shadowcam.core.model.VirtualCameraState
+import com.shadowcam.navigation.LocalNavController
 import com.shadowcam.ui.theme.AccentCyan
 import com.shadowcam.ui.theme.AccentLime
 import com.shadowcam.ui.theme.AccentPurple
@@ -36,8 +42,12 @@ import kotlinx.coroutines.launch
 @Composable
 fun HomeScreen() {
     val deps = LocalAppDependencies.current
+    val navController = LocalNavController.current
+    val ioScope = rememberIoScope()
     val state by deps.virtualCameraEngine.state.collectAsState()
     val rootState by deps.rootCamera1Manager.state.collectAsState()
+    val dismissedGettingStarted by deps.onboardingStore.hasDismissedGettingStarted.collectAsState(initial = false)
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -45,7 +55,28 @@ fun HomeScreen() {
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        Text("ShadowCam Control", style = MaterialTheme.typography.headlineSmall)
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text("ShadowCam Control", style = MaterialTheme.typography.headlineSmall)
+            IconButton(onClick = { navController.navigate("help") }) {
+                Icon(Icons.Filled.Help, contentDescription = "Help")
+            }
+        }
+
+        if (!dismissedGettingStarted) {
+            GettingStartedCard(
+                onOpenApps = { navController.navigate("apps") },
+                onOpenSources = { navController.navigate("sources") },
+                onOpenHelp = { navController.navigate("help") },
+                onDismiss = {
+                    ioScope.launch { deps.onboardingStore.setDismissedGettingStarted(true) }
+                }
+            )
+        }
+
         ModeRow(state.mode) { deps.virtualCameraEngine.setMode(it) }
         StatusCards(state, rootState)
         ControlButtons(state)
@@ -54,6 +85,35 @@ fun HomeScreen() {
             item { StatPill("FPS", "${state.fps}") }
             item { StatPill("Latency", "${state.latencyMs} ms") }
             item { StatPill("Uptime", "${state.uptimeMs / 1000}s") }
+        }
+    }
+}
+
+@Composable
+private fun GettingStartedCard(
+    onOpenApps: () -> Unit,
+    onOpenSources: () -> Unit,
+    onOpenHelp: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    Card(colors = CardDefaults.cardColors(containerColor = SurfaceElevated)) {
+        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text("Getting Started", style = MaterialTheme.typography.titleMedium)
+                OutlinedButton(onClick = onDismiss) { Text("Hide") }
+            }
+            Text("1. Pick a Target App (Apps tab).", style = MaterialTheme.typography.bodyMedium)
+            Text("2. Select a source and Sync (Sources tab).", style = MaterialTheme.typography.bodyMedium)
+            Text("3. Arm VCAM (Home tab), then open the target app.", style = MaterialTheme.typography.bodyMedium)
+            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                OutlinedButton(onClick = onOpenApps) { Text("Open Apps") }
+                OutlinedButton(onClick = onOpenSources) { Text("Open Sources") }
+                Button(onClick = onOpenHelp) { Text("Full Guide") }
+            }
         }
     }
 }
