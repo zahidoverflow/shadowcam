@@ -7,6 +7,7 @@ import androidx.compose.material.icons.filled.Help
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Source
+import androidx.compose.material.icons.filled.Tune
 import androidx.compose.ui.graphics.vector.ImageVector
 
 sealed class NavDestination(val route: String, val label: String, val icon: ImageVector) {
@@ -16,6 +17,7 @@ sealed class NavDestination(val route: String, val label: String, val icon: Imag
     object Expert : NavDestination("expert", "Expert", Icons.Filled.Build)
     object Logs : NavDestination("logs", "Logs", Icons.Filled.Settings)
     object Help : NavDestination("help", "Help", Icons.Filled.Help)
+    object Setup : NavDestination("setup", "Setup", Icons.Filled.Tune)
 }
 
 val bottomDestinations = listOf(

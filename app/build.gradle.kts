@@ -69,6 +69,10 @@ dependencies {
     implementation(project(":logging"))
     implementation(project(":antidetect"))
 
+    // Xposed/LSPosed API is provided by the framework at runtime.
+    // This project dependency contains compile-time stubs only and is not packaged.
+    compileOnly(project(":xposed-stubs"))
+
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.activity.compose)

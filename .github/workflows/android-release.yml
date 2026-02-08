@@ -34,6 +34,10 @@ jobs:
       - name: Grant execute permission for Gradle wrapper
         run: chmod +x gradlew
 
+      - name: Check repo integrity (cloud-sync guardrail)
+        shell: pwsh
+        run: ./scripts/check-git-corruption.ps1
+
       - name: Build release APK
         run: ./gradlew clean :app:assembleRelease
 
@@ -52,4 +56,3 @@ jobs:
         with:
           files: app/build/outputs/apk/release/ShadowCam-${{ github.ref_name }}.apk
           generate_release_notes: true
-

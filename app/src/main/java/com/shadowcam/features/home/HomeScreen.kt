@@ -81,6 +81,7 @@ fun HomeScreen() {
                 onOpenApps = { navController.navigate("apps") },
                 onOpenSources = { navController.navigate("sources") },
                 onOpenHelp = { navController.navigate("help") },
+                onOpenSetup = { navController.navigate("setup") },
                 onDismiss = {
                     ioScope.launch { deps.onboardingStore.setDismissedGettingStarted(true) }
                 }
@@ -89,6 +90,7 @@ fun HomeScreen() {
 
         ModuleStatusCard(
             detectedModules = detectedModules,
+            onOpenSetup = { navController.navigate("setup") },
             onOpenHelp = { navController.navigate("help") }
         )
 
@@ -134,6 +136,7 @@ private fun GettingStartedCard(
     onOpenApps: () -> Unit,
     onOpenSources: () -> Unit,
     onOpenHelp: () -> Unit,
+    onOpenSetup: () -> Unit,
     onDismiss: () -> Unit
 ) {
     Card(colors = CardDefaults.cardColors(containerColor = SurfaceElevated)) {
@@ -152,6 +155,7 @@ private fun GettingStartedCard(
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 OutlinedButton(onClick = onOpenApps) { Text("Open Apps") }
                 OutlinedButton(onClick = onOpenSources) { Text("Open Sources") }
+                OutlinedButton(onClick = onOpenSetup) { Text("Setup") }
                 Button(onClick = onOpenHelp) { Text("Full Guide") }
             }
         }
@@ -161,6 +165,7 @@ private fun GettingStartedCard(
 @Composable
 private fun ModuleStatusCard(
     detectedModules: List<com.shadowcam.lsposed.DetectedModule>,
+    onOpenSetup: () -> Unit,
     onOpenHelp: () -> Unit
 ) {
     Card(colors = CardDefaults.cardColors(containerColor = SurfaceElevated)) {
@@ -174,10 +179,11 @@ private fun ModuleStatusCard(
                     color = WarningAmber
                 )
                 Text(
-                    "ShadowCam is an app, not an LSPosed module, so it will not appear in LSPosed's Modules list.",
+                    "If you're using LSPosed-based injection, install a compatible module and enable it in LSPosed, then reboot.",
                     style = MaterialTheme.typography.bodyMedium
                 )
                 Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                    OutlinedButton(onClick = onOpenSetup) { Text("Setup") }
                     Button(onClick = onOpenHelp) { Text("Help") }
                 }
             } else {
@@ -197,6 +203,10 @@ private fun ModuleStatusCard(
                     "Make sure the module is enabled in LSPosed and scoped to your target app, then reboot.",
                     style = MaterialTheme.typography.bodyMedium
                 )
+                Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                    OutlinedButton(onClick = onOpenSetup) { Text("Setup") }
+                    OutlinedButton(onClick = onOpenHelp) { Text("Help") }
+                }
             }
         }
     }

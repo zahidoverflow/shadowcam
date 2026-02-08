@@ -21,6 +21,7 @@ import com.shadowcam.features.expert.ExpertScreen
 import com.shadowcam.features.help.HelpScreen
 import com.shadowcam.features.home.HomeScreen
 import com.shadowcam.features.logs.LogsScreen
+import com.shadowcam.features.setup.SetupWizardScreen
 import com.shadowcam.features.sources.SourcesScreen
 import com.shadowcam.navigation.NavDestination
 import com.shadowcam.navigation.LocalNavController
@@ -75,6 +76,7 @@ fun ShadowCamAppRoot() {
                 composable(NavDestination.Expert.route) { ExpertScreen() }
                 composable(NavDestination.Logs.route) { LogsScreen() }
                 composable(NavDestination.Help.route) { HelpScreen() }
+                composable(NavDestination.Setup.route) { SetupWizardScreen() }
             }
         }
     }

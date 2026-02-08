@@ -21,9 +21,9 @@ Common Problems
   - Re-sync the source and confirm the target app is selected (if using Private Dir).
   - Some apps use Camera2; your module/hook must support your target app/device.
 - Not showing in LSPosed:
-  - This is normal. ShadowCam is an app, not an LSPosed/Xposed module.
-  - LSPosed will only show the camera hook module (for example VCAMPro) in its Modules list.
-  - Make sure your module is installed, enabled, and scoped to the target app in LSPosed, then reboot.
+  - If you installed ShadowCam as an LSPosed legacy module build, it SHOULD appear in LSPosed's Modules list.
+  - If it does not appear: reinstall the APK, then open LSPosed and refresh Modules.
+  - For any hook module (ShadowCam or a separate one like VCAMPro): make sure it's installed, enabled, scoped to the target app, then reboot.
 - Need logs:
   - Logs tab: Export to Downloads (shadowcam_debug.log).
 

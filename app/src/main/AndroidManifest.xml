@@ -26,6 +26,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ShadowCam">
 
+        <!-- LSPosed/Xposed legacy module metadata -->
+        <meta-data android:name="xposedmodule" android:value="true" />
+        <meta-data
+            android:name="xposeddescription"
+            android:value="ShadowCam: virtual camera controller (with optional LSPosed module entrypoint)" />
+        <meta-data android:name="xposedminversion" android:value="93" />
+
         <activity
             android:name=".MainActivity"
             android:exported="true"

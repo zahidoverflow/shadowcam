@@ -28,5 +28,6 @@ include(
     ":profiles",
     ":sources",
     ":logging",
-    ":antidetect"
+    ":antidetect",
+    ":xposed-stubs"
 )
