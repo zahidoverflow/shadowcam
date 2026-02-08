@@ -20,10 +20,13 @@ Common Problems
 - No virtual feed in target app:
   - Re-sync the source and confirm the target app is selected (if using Private Dir).
   - Some apps use Camera2; your module/hook must support your target app/device.
+- Not showing in LSPosed:
+  - This is normal. ShadowCam is an app, not an LSPosed/Xposed module.
+  - LSPosed will only show the camera hook module (for example VCAMPro) in its Modules list.
+  - Make sure your module is installed, enabled, and scoped to the target app in LSPosed, then reboot.
 - Need logs:
   - Logs tab: Export to Downloads (shadowcam_debug.log).
 
 Safety Notes
 - Using virtual camera features in third-party apps may violate their rules.
 - Keep logs private; they can include device and session metadata.
-

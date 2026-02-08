@@ -23,12 +23,19 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import com.shadowcam.LocalAppDependencies
+import com.shadowcam.core.model.LogLevel
 import com.shadowcam.core.model.VirtualCameraMode
 import com.shadowcam.core.model.VirtualCameraState
+import com.shadowcam.lsposed.ModuleDetector
 import com.shadowcam.navigation.LocalNavController
 import com.shadowcam.ui.theme.AccentCyan
 import com.shadowcam.ui.theme.AccentLime
@@ -44,9 +51,12 @@ fun HomeScreen() {
     val deps = LocalAppDependencies.current
     val navController = LocalNavController.current
     val ioScope = rememberIoScope()
+    val context = LocalContext.current
+    val detectedModules = remember { ModuleDetector.detectKnownModules(context) }
     val state by deps.virtualCameraEngine.state.collectAsState()
     val rootState by deps.rootCamera1Manager.state.collectAsState()
     val dismissedGettingStarted by deps.onboardingStore.hasDismissedGettingStarted.collectAsState(initial = false)
+    var checklistResult by remember { mutableStateOf<String?>(null) }
 
     Column(
         modifier = Modifier
@@ -76,6 +86,36 @@ fun HomeScreen() {
                 }
             )
         }
+
+        ModuleStatusCard(
+            detectedModules = detectedModules,
+            onOpenHelp = { navController.navigate("help") }
+        )
+
+        ChecklistCard(
+            result = checklistResult,
+            onRun = {
+                ioScope.launch {
+                    val cameraPermission = ContextCompat.checkSelfPermission(
+                        context,
+                        android.Manifest.permission.CAMERA
+                    ) == android.content.pm.PackageManager.PERMISSION_GRANTED
+
+                    val summary = buildString {
+                        appendLine("Checklist:")
+                        appendLine("rootAvailable=${rootState.rootAvailable}")
+                        appendLine("targetApp=${rootState.targetApp?.packageName ?: "none"}")
+                        appendLine("sourceSelected=${(state.source != null) || (rootState.video != null) || (rootState.image != null)}")
+                        appendLine("lastSynced=${rootState.lastSynced?.destPath ?: "none"}")
+                        appendLine("modulesDetected=${detectedModules.joinToString { it.packageName }.ifBlank { "none" }}")
+                        appendLine("cameraPermissionGranted=$cameraPermission")
+                    }.trimEnd()
+
+                    deps.logSink.log(LogLevel.INFO, "Checklist", summary)
+                    checklistResult = "Saved to Logs (tag=Checklist)"
+                }
+            }
+        )
 
         ModeRow(state.mode) { deps.virtualCameraEngine.setMode(it) }
         StatusCards(state, rootState)
@@ -113,6 +153,72 @@ private fun GettingStartedCard(
                 OutlinedButton(onClick = onOpenApps) { Text("Open Apps") }
                 OutlinedButton(onClick = onOpenSources) { Text("Open Sources") }
                 Button(onClick = onOpenHelp) { Text("Full Guide") }
+            }
+        }
+    }
+}
+
+@Composable
+private fun ModuleStatusCard(
+    detectedModules: List<com.shadowcam.lsposed.DetectedModule>,
+    onOpenHelp: () -> Unit
+) {
+    Card(colors = CardDefaults.cardColors(containerColor = SurfaceElevated)) {
+        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Text("Module Status", style = MaterialTheme.typography.titleMedium)
+
+            if (detectedModules.isEmpty()) {
+                Text(
+                    "No known LSPosed/Xposed camera module detected on this device.",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = WarningAmber
+                )
+                Text(
+                    "ShadowCam is an app, not an LSPosed module, so it will not appear in LSPosed's Modules list.",
+                    style = MaterialTheme.typography.bodyMedium
+                )
+                Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                    Button(onClick = onOpenHelp) { Text("Help") }
+                }
+            } else {
+                val first = detectedModules.first()
+                Text(
+                    "Detected: ${first.label} (${first.packageName})",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = AccentLime
+                )
+                if (detectedModules.size > 1) {
+                    Text(
+                        "Also installed: ${detectedModules.drop(1).joinToString { it.packageName }}",
+                        style = MaterialTheme.typography.labelMedium
+                    )
+                }
+                Text(
+                    "Make sure the module is enabled in LSPosed and scoped to your target app, then reboot.",
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun ChecklistCard(
+    result: String?,
+    onRun: () -> Unit
+) {
+    Card(colors = CardDefaults.cardColors(containerColor = SurfaceElevated)) {
+        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Text("Test Checklist", style = MaterialTheme.typography.titleMedium)
+            Text(
+                "Runs a quick self-check and writes a summary to Logs for debugging.",
+                style = MaterialTheme.typography.bodyMedium
+            )
+            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                Button(onClick = onRun) { Text("Run Checklist") }
+            }
+            if (!result.isNullOrBlank()) {
+                Text(result, style = MaterialTheme.typography.bodyMedium, color = AccentLime)
             }
         }
     }
