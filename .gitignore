@@ -21,3 +21,6 @@ shadowcam_debug.log
 # Release artifacts
 *.apk
 *.aab
+
+# Local sample docs/assets (do not commit)
+/docs/sample/
